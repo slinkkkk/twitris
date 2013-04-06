@@ -122,11 +122,11 @@
  * document.getElementById("tetris-nextpuzzle") cache ?
  *
  */
-function Tetris(infoboard,mainboard)
+function Tetris(infoboard,scene)
 {
 	var self = this;
 	this.infoboardScore = infoboard;
-	this.mainboard = mainboard;
+	this.scene = scene;
 	this.stats = new Stats(infoboard);
 	this.puzzle = null;
 	this.area = null;
@@ -150,7 +150,7 @@ function Tetris(infoboard,mainboard)
 		document.getElementById("tetris-nextpuzzle").style.display = "block";
 		document.getElementById("tetris-keys").style.display = "none";
 		self.area = new Area(self.unit, self.areaX, self.areaY, "tetris-area");
-		self.puzzle = new Puzzle(self, self.area, self.mainboard);
+		self.puzzle = new Puzzle(self, self.area, self.scene);
 		if (self.puzzle.mayPlace()) {
 			self.puzzle.place();
 		} else {
@@ -762,12 +762,13 @@ function Tetris(infoboard,mainboard)
 	 * Puzzle consists of blocks.
 	 * Each puzzle after rotating 4 times, returns to its primitive position.
 	 */
-	function Puzzle(tetris, area, mainboard)
+	function Puzzle(tetris, area, scene)
 	{
 		var self = this;
 		this.tetris = tetris;
 		this.area = area;
-		this.mainboard = mainboard;
+		this.scene = scene;
+		this.puzzle3D = null;
 		// timeout ids
 		this.fallDownID = null;
 		this.forceMoveDownID = null;
@@ -960,6 +961,17 @@ function Tetris(infoboard,mainboard)
 				for (var x = 0; x < puzzle[y].length; x++) {
 					if (puzzle[y][x]) {
 						lineFound = true;
+						// intervenção na parte grafica
+						var puzzlepiece = document.createElement( 'div' );
+					puzzlepiece.className = 'puzzlepiece';
+					puzzlepiece.style.backgroundColor = 'rgba(0,127,127,0.5)';// + ( Math.random() * 0.5 + 0.25 ) + ')';
+					mainboard.push(puzzlepiece);
+					var object = new THREE.CSS3DObject( puzzlepiece );
+					object.position.x = ((areaStartX + x) * 101) - 1540;
+					object.position.y = ((areaStartY - lines) * 101) + 1100;
+					object.position.z = 0;
+					scene.add( object );
+
 						var el = document.createElement("div");
 						el.className = "block" + this.type;
 						el.style.left = (areaStartX + x) * this.area.unit + "px";
