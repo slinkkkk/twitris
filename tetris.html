@@ -1,0 +1,453 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">
+	<title>JsTetris	- javascript tetris - open source</title>
+	<meta http-equiv="Content-Type"	content="text/html;	charset=utf-8">
+	<link href="tetris.css"	rel="stylesheet" type="text/css">
+	<link href="tetris.ico" rel="shortcut icon">
+	<script	type="text/javascript" src="tetris.js"></script>
+	<style type="text/css">
+	html, body { height: 100%; }
+	#tetris	{ margin: 0	auto; }
+	</style>
+	<style>
+			html, body {
+				height: 100%;
+			}
+
+			body {
+				background-color: #000000;
+				margin: 0;
+				font-family: Arial;
+				overflow: hidden;
+			}
+
+			a {
+				color: #ffffff;
+			}
+
+			#info {
+				position: absolute;
+				width: 100%;
+				color: #ffffff;
+				padding: 5px;
+				font-family: Monospace;
+				font-size: 13px;
+				font-weight: bold;
+				text-align: center;
+				z-index: 1;
+			}
+
+			#menu {
+				position: absolute;
+				bottom: 20px;
+				width: 100%;
+				text-align: center;
+			}
+			.infoboard {
+				width: 400px;
+				height: 2222px;
+				box-shadow: 0px 0px 1px rgba(255,0,0,0.5);
+				border: 1px solid rgba(0,127,127,1);
+				cursor: default;
+			}
+
+			.puzzlepiece {
+				width: 100px;
+				height: 100px;
+				box-shadow: 0px 0px 1px rgba(255,0,0,0.5);
+				border: 1px solid rgba(0,127,127,1);
+				cursor: default;
+			}
+
+			.element:hover {
+				box-shadow: 0px 0px 20px rgba(0,255,255,0.75);
+				border: 1px solid rgba(127,255,255,0.75);
+			}
+
+				.element .number {
+					position: absolute;
+					top: 20px;
+					right: 20px;
+					font-size: 20px;
+					color: rgba(127,255,255,0.75);
+				}
+.infoboardScore {
+					position: absolute;
+					top: 40px;
+					width: 100%;
+					font-size: 70px;
+					text-align: center;
+					color: rgba(255,255,255,0.75);
+					font-weight: bold;
+
+					-webkit-filter: drop-shadow(0px 0px 20px rgba(0,255,255,0.95));
+					-moz-filter: drop-shadow(0px 0px 20px rgba(0,255,255,0.95));
+					-o-filter: drop-shadow(0px 0px 20px rgba(0,255,255,0.95));
+					-ms-filter: drop-shadow(0px 0px 20px rgba(0,255,255,0.95));
+					filter: drop-shadow(0px 0px 20px rgba(0,255,255,0.95));
+				}
+
+
+				.element .symbol {
+					position: absolute;
+					top: 40px;
+					width: 100%;
+					font-size: 70px;
+					text-align: center;
+					color: rgba(255,255,255,0.75);
+					font-weight: bold;
+
+					-webkit-filter: drop-shadow(0px 0px 20px rgba(0,255,255,0.95));
+					-moz-filter: drop-shadow(0px 0px 20px rgba(0,255,255,0.95));
+					-o-filter: drop-shadow(0px 0px 20px rgba(0,255,255,0.95));
+					-ms-filter: drop-shadow(0px 0px 20px rgba(0,255,255,0.95));
+					filter: drop-shadow(0px 0px 20px rgba(0,255,255,0.95));
+				}
+
+				.element .details {
+					position: absolute;
+					top: 125px;
+					width: 100%;
+					font-size: 18px;
+					text-align: center;
+					color: rgba(127,255,255,0.75);
+				}
+
+			button {
+				color: rgba(127,255,255,0.75);
+				background: transparent;
+				outline: 1px solid rgba(127,255,255,0.75);
+				border: 0px;
+				padding: 5px 10px;
+				cursor: pointer;
+			}
+			button:hover {
+				background-color: rgba(0,255,255,0.5);
+			}
+			button:active {
+				color: #000000;
+				background-color: rgba(0,255,255,0.75);
+			}
+		</style>
+</head>
+<body>
+
+<script src="build/three.min.js"></script>
+		<script src="js/libs/tween.min.js"></script>
+		<script src="js/controls/TrackballControls.js"></script>
+		<script src="js/renderers/CSS3DRenderer.js"></script>
+
+		<div id="container"></div>
+		
+		<div id="menu">
+			<button id="table">TABLE</button>
+			<button id="sphere">SPHERE</button>
+			<button id="helix">HELIX</button>
+			<button id="grid">GRID</button>
+		</div>
+
+		
+
+
+<table style="width: 100%; height: 100%;" cellspacing="0" cellpadding="0"><tr><td style="vertical-align: middle;">
+
+	<div id="tetris">
+		<div class="left">
+			<h1><a href="http://www.gosu.pl/tetris/">Js	Tetris 1.19</a></h1>
+			<div class="menu">
+				<div><a href="javascript:void(0)" id="tetris-menu-start">New Game</a></div>
+				<div id="tetris-pause">
+					<a href="javascript:void(0)" id="tetris-menu-pause">Pause</a>
+				</div>
+				<div style="display: none;" id="tetris-resume">
+					<a href="javascript:void(0)" id="tetris-menu-resume">Resume</a>
+				</div>
+				<div><a href="javascript:void(0)" id="tetris-menu-highscores">Highscores</a></div>
+				<div><a href="javascript:void(0)" id="tetris-menu-help">About</a></div>
+			</div>
+			<div id="tetris-nextpuzzle"></div>
+			<div id="tetris-gameover">Game Over</div>
+			<div id="tetris-keys">
+				<div class="h5">Keyboard:</div>
+				<table cellspacing="0" cellpadding="0">
+				<tr>
+					<td>Rotate:</td>
+					<td></td>
+					<td><img src="key-up.gif" width="14" height="14" alt=""></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Move:</td>
+					<td><img src="key-left.gif" width="14" height="14" alt=""></td>
+					<td><img src="key-down.gif" width="14" height="14" alt=""></td>
+					<td><img src="key-right.gif" width="14" height="14" alt=""></td>
+				</tr>
+				<tr>
+					<td>Fall:</td>
+					<td colspan="3">
+						<img src="key-space.gif" width="44" height="13" alt="">
+					</td>
+				</tr>
+				</table>
+			</div>
+			<div class="stats">
+				<div class="h5">Statistics:</div>
+				<table cellspacing="0" cellpadding="0">
+				<tr>
+					<td	class="level">Level:</td>
+					<td><span id="tetris-stats-level">1</span></td>
+				</tr>
+				<tr>
+					<td	class="score">Score:</td>
+					<td><span id="tetris-stats-score">0</span></td>
+				</tr>
+				<tr>
+					<td	class="lines">Lines:</td>
+					<td><span id="tetris-stats-lines">0</span></td>
+				</tr>
+				<tr>
+					<td	class="apm">APM:</td>
+					<td><span id="tetris-stats-apm">0</span></td>
+				</tr>
+				<tr>
+					<td	class="time">Time:</td>
+					<td><span id="tetris-stats-time">0</span></td>
+				</tr>
+
+				</table>
+			</div>
+		</div>
+		<div class="left-border"></div>
+		<div id="tetris-area">
+			<div class="grid1"></div>
+			<div class="grid2"></div>
+			<div class="grid3"></div>
+			<div class="grid4"></div>
+			<div class="grid5"></div>
+			<div class="grid6"></div>
+		</div>
+		<div id="tetris-help" class="window">
+			<div class="top">
+				About <span id="tetris-help-close" class="close">x</span>
+			</div>
+			<div class="content" style="margin-top:	1em;">
+				<div style="margin-top:	1em;">
+				<div>JsTetris is a highly customizable tetris game written in javascript,
+				full sources available, it is free to modify.
+				</div>
+				<br>
+				<div>Author: Cezary Tomczak</div>
+				<div>Site: <a href="http://www.gosu.pl/tetris/">www.gosu.pl/tetris/</a></div>
+				<br>
+				<div>License: BSD revised (free for any use)</div>
+				</div>
+			</div>
+		</div>
+		<div id="tetris-highscores"	class="window">
+			<div class="top">
+				Highscores <span id="tetris-highscores-close" class="close">x</span>
+			</div>
+			<div class="content">
+				<div id="tetris-highscores-content"></div>
+				<br>
+				Note: these	scores are kept	in cookies,	they are only visible to your computer.
+			</div>
+		</div>
+	</div>
+
+</td></tr></table>
+
+<script>
+
+			var table = [];		
+
+			var camera, scene, renderer;
+			var controls;
+
+			var objects = [];
+			var targets = { table: [], sphere: [], helix: [], grid: [] };
+			var tetris;
+			var infoboard;	
+			var infoboardScore;
+			var infoboardOBJ;
+			var mainboard = [];
+
+								
+			init();
+			animate();
+
+			function init() {
+					for (var i = 0; i < 12; i++) 
+						for (var j = 0; j < 22; j++) 
+						 table.push([(i+1)*(j+1), "b", "c", i, j]);
+
+					
+
+
+				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 5000 );
+				camera.position.z = 1800;
+
+				scene = new THREE.Scene();
+				// Instancia infoboard onde fica o menu e as demais info
+				 	infoboard = document.createElement( 'div' );
+					infoboard.className = 'infoboard';
+					infoboard.style.backgroundColor = 'rgba(0,127,127,0.5)';// + ( Math.random() * 0.5 + 0.25 ) + ')';
+
+					infoboardScore = document.createElement( 'div' );
+					infoboardScore.className = 'infoboardScore';
+					infoboardScore.textContent = 0;
+					infoboard.appendChild( infoboardScore );
+
+					infoboardOBJ = new THREE.CSS3DObject( infoboard );			
+					infoboardOBJ.position.x = - 1840;
+					infoboardOBJ.position.y = 44;
+					infoboardOBJ.position.z = 0;
+
+					scene.add( infoboardOBJ );
+					//objects.push( object );
+
+				for ( var i = 0; i < table.length; i ++ ) {
+
+					var item = table[ i ];
+
+					var puzzlepiece = document.createElement( 'div' );
+					puzzlepiece.className = 'puzzlepiece';
+					puzzlepiece.style.backgroundColor = 'rgba(0,127,127,0.5)';// + ( Math.random() * 0.5 + 0.25 ) + ')';
+					mainboard.push(puzzlepiece);
+					var object = new THREE.CSS3DObject( puzzlepiece );
+					object.position.x = Math.random() * 4000 - 2000;
+					object.position.y = Math.random() * 4000 - 2000;
+					object.position.z = Math.random() * 4000 - 2000;
+					scene.add( object );
+
+					objects.push( object );
+
+				}
+
+				// table
+
+				for ( var i = 0; i < objects.length; i ++ ) {
+
+					var item = table[ i ];
+
+					var object = new THREE.Object3D();
+					object.position.x = ( item[ 3 ] * 101 ) - 1540;
+					object.position.y = - ( item[ 4 ] * 101 ) + 1100;
+
+					targets.table.push( object );
+
+				}
+
+				
+
+				//
+
+				renderer = new THREE.CSS3DRenderer();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.domElement.style.position = 'absolute';
+				document.getElementById( 'container' ).appendChild( renderer.domElement );
+
+				//
+
+				controls = new THREE.TrackballControls( camera, renderer.domElement );
+				controls.rotateSpeed = 0.5;
+				controls.addEventListener( 'change', render );
+
+				var button = document.getElementById( 'table' );
+				button.addEventListener( 'click', function ( event ) {
+					alert(tetris.stats.getScore());
+					
+
+				}, false );
+
+				var button = document.getElementById( 'sphere' );
+				button.addEventListener( 'click', function ( event ) {
+
+					transform( targets.sphere, 2000 );
+
+				}, false );
+
+				var button = document.getElementById( 'helix' );
+				button.addEventListener( 'click', function ( event ) {
+
+					transform( targets.helix, 2000 );
+
+				}, false );
+
+				var button = document.getElementById( 'grid' );
+				button.addEventListener( 'click', function ( event ) {
+
+					transform( targets.grid, 2000 );
+
+				}, false );
+
+				transform( targets.table, 2000 );
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+				tetris = new Tetris(infoboardScore,mainboard);
+				tetris.unit = 14;
+					tetris.areaX = 12;
+					tetris.areaY = 22; // tamanho do campo
+
+			}
+
+			function transform( targets, duration ) {
+
+				TWEEN.removeAll();
+
+				for ( var i = 0; i < objects.length; i ++ ) {
+
+					var object = objects[ i ];
+					var target = targets[ i ];
+
+					new TWEEN.Tween( object.position )
+						.to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
+						.easing( TWEEN.Easing.Exponential.InOut )
+						.start();
+
+					new TWEEN.Tween( object.rotation )
+						.to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration )
+						.easing( TWEEN.Easing.Exponential.InOut )
+						.start();
+
+				}
+
+				new TWEEN.Tween( this )
+					.to( {}, duration * 2 )
+					.onUpdate( render )
+					.start();
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				TWEEN.update();
+				controls.update();
+
+			}
+
+			function render() {
+				
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+
+</body>
+</html>
