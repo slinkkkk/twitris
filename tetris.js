@@ -964,12 +964,12 @@ function Tetris(infoboard,scene)
 						// intervenção na parte grafica
 						var puzzlepiece = document.createElement( 'div' );
 					puzzlepiece.className = 'puzzlepiece';
-					puzzlepiece.style.backgroundColor = 'rgba(0,127,127,0.5)';// + ( Math.random() * 0.5 + 0.25 ) + ')';
+					puzzlepiece.style.backgroundColor = 'rgba(255,0,0,0.5)';// + ( Math.random() * 0.5 + 0.25 ) + ')';
 					mainboard.push(puzzlepiece);
-					var object = new THREE.CSS3DObject( puzzlepiece );
-					object.position.x = ((areaStartX + x) * 101) - 1540;
-					object.position.y = ((areaStartY - lines) * 101) + 1100;
-					object.position.z = 0;
+					var this.puzzle3D = new THREE.CSS3DObject( puzzlepiece );
+					puzzle3D.position.x = ((areaStartX + x) * 101) - 1540;
+					puzzle3D.position.y = ((areaStartY - lines) * 101) + 1100;
+					puzzle3D.position.z = 0;
 					scene.add( object );
 
 						var el = document.createElement("div");
@@ -1203,7 +1203,7 @@ function Tetris(infoboard,scene)
 		{
 			for (var i = 0; i < this.elements.length; i++) {
 				this.elements[i].style.top = this.elements[i].offsetTop + this.area.unit + "px";
-			}
+				puzzle3D.position.y += 100;			}
 			this.y++;
 		};
 
