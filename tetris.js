@@ -1,7 +1,4 @@
 /*
-
- * DAVI TESTANDO 1, 2, 3... BOOM!
- *
  * PROJECT:  JsTetris
  * VERSION:  1.19
  * LICENSE:  BSD (revised)
