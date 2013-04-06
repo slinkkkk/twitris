@@ -1,4 +1,5 @@
 /*
+ *
  * PROJECT:  JsTetris
  * VERSION:  1.19
  * LICENSE:  BSD (revised)
