@@ -768,7 +768,6 @@ function Tetris(infoboard,scene)
 		this.tetris = tetris;
 		this.area = area;
 		this.scene = scene;
-		this.puzzle3D = null;
 		// timeout ids
 		this.fallDownID = null;
 		this.forceMoveDownID = null;
@@ -783,7 +782,7 @@ function Tetris(infoboard,scene)
 		this.board = []; // filled with html elements after placing on area
 		this.elements = [];
 		this.nextElements = []; // next board elements
-
+		this.puzzle3D = [];
 		// (x,y) position of the puzzle (top-left)
 		this.x = null;
 		this.y = null;
@@ -962,15 +961,14 @@ function Tetris(infoboard,scene)
 					if (puzzle[y][x]) {
 						lineFound = true;
 						// intervenção na parte grafica
-						var puzzlepiece = document.createElement( 'div' );
+					var puzzlepiece = document.createElement( 'div' );
 					puzzlepiece.className = 'puzzlepiece';
 					puzzlepiece.style.backgroundColor = 'rgba(255,0,0,0.5)';// + ( Math.random() * 0.5 + 0.25 ) + ')';
-					mainboard.push(puzzlepiece);
-					var this.puzzle3D = new THREE.CSS3DObject( puzzlepiece );
-					puzzle3D.position.x = ((areaStartX + x) * 101) - 1540;
-					puzzle3D.position.y = ((areaStartY - lines) * 101) + 1100;
-					puzzle3D.position.z = 0;
-					scene.add( object );
+					this.puzzle3D.push( new THREE.CSS3DObject( puzzlepiece ));
+					this.puzzle3D[this.puzzle3D.length-1].position.x = ((areaStartX + x) * 101) - 1540;
+					this.puzzle3D[this.puzzle3D.length-1].position.y = ((areaStartY - lines) * 101) + 1100;
+					this.puzzle3D[this.puzzle3D.length-1].position.z = 0;
+					scene.add( this.puzzle3D[this.puzzle3D.length-1] );
 
 						var el = document.createElement("div");
 						el.className = "block" + this.type;
@@ -1202,8 +1200,9 @@ function Tetris(infoboard,scene)
 		this.moveDown = function()
 		{
 			for (var i = 0; i < this.elements.length; i++) {
-				this.elements[i].style.top = this.elements[i].offsetTop + this.area.unit + "px";
-				puzzle3D.position.y += 100;			}
+				this.elements[i].style.top  = this.elements[i].offsetTop + this.area.unit + "px";
+				this.puzzle3D[i].position.y -= 100;			
+			}
 			this.y++;
 		};
 
