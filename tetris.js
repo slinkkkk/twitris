@@ -954,6 +954,7 @@ function Tetris(infoboard,scene)
 			var lines = 0;
 			this.x = areaStartX;
 			this.y = 1;
+			this.puzzle3D = [];
 			this.board = this.createEmptyPuzzle(puzzle.length, puzzle[0].length);
 			// create puzzle
 			for (var y = puzzle.length - 1; y >= 0; y--) {
@@ -964,6 +965,7 @@ function Tetris(infoboard,scene)
 					var puzzlepiece = document.createElement( 'div' );
 					puzzlepiece.className = 'puzzlepiece';
 					puzzlepiece.style.backgroundColor = 'rgba(255,0,0,0.5)';// + ( Math.random() * 0.5 + 0.25 ) + ')';
+				
 					this.puzzle3D.push( new THREE.CSS3DObject( puzzlepiece ));
 					this.puzzle3D[this.puzzle3D.length-1].position.x = ((areaStartX + x) * 101) - 1540;
 					this.puzzle3D[this.puzzle3D.length-1].position.y = ((areaStartY - lines) * 101) + 1100;
@@ -1164,6 +1166,9 @@ function Tetris(infoboard,scene)
 						el.style.left = el.offsetLeft + (moveX * this.area.unit) + "px";
 						el.style.top = el.offsetTop + (moveY * this.area.unit) + "px";
 						puzzle[newY][newX] = el;
+						this.puzzle3D[this.puzzle3D.length-1].position.x = (moveX * 101);
+						this.puzzle3D[this.puzzle3D.length-1].position.y = (moveY * 101);
+
 					}
 				}
 			}
@@ -1201,7 +1206,8 @@ function Tetris(infoboard,scene)
 		{
 			for (var i = 0; i < this.elements.length; i++) {
 				this.elements[i].style.top  = this.elements[i].offsetTop + this.area.unit + "px";
-				this.puzzle3D[i].position.y -= 100;			
+				this.puzzle3D[i].position.y -= 101;		
+
 			}
 			this.y++;
 		};
@@ -1235,6 +1241,7 @@ function Tetris(infoboard,scene)
 		{
 			for (var i = 0; i < this.elements.length; i++) {
 				this.elements[i].style.left = this.elements[i].offsetLeft - this.area.unit + "px";
+				this.puzzle3D[i].position.x -= 101;	
 			}
 			this.x--;
 		};
@@ -1268,6 +1275,7 @@ function Tetris(infoboard,scene)
 		{
 			for (var i = 0; i < this.elements.length; i++) {
 				this.elements[i].style.left = this.elements[i].offsetLeft + this.area.unit + "px";
+				this.puzzle3D[i].position.x += 101;	
 			}
 			this.x++;
 		};
