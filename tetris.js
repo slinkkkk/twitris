@@ -175,6 +175,13 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 		self.stats.start();
 		document.getElementById("tetris-nextpuzzle").style.display = "block";
 		document.getElementById("tetris-keys").style.display = "none";
+				// cria array bi dimensional do tabuleiro 3D
+				for (var y = 0; y < 22; y++) {
+					this.puzzleboard.push(new Array());
+					for (var x = 0; x < 12; x++) {
+					this.puzzleboard[y].push(0);
+				}
+			}
 		self.area = new Area(self.unit, self.areaX, self.areaY, "tetris-area");
 		self.puzzle = new Puzzle(self, self.area, self.scene);
 		if (self.puzzle.mayPlace()) {
@@ -661,7 +668,6 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 		this.el = document.getElementById(id);
 
 		this.board = [];
-		this.puzzleboard = [];
 
 		// create 2-dimensional board
 		for (var y = 0; y < this.y; y++) {
@@ -670,13 +676,7 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 				this.board[y].push(0);
 			}
 		}
-		// cria array bi dimensional do tabuleiro 3D
-				for (var y = 0; y < this.y; y++) {
-					this.puzzleboard.push(new Array());
-					for (var x = 0; x < this.x; x++) {
-					this.puzzleboard[y].push(0);
-				}
-			}
+
 
 		/**
 		 * Removing html elements from area.
@@ -980,6 +980,16 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 				this.tetris.stats.setPuzzles(0);
 			}
 			// init
+			if(tetris.activepuzzle.length-1 > 0)
+				{
+					for(var i = 0; i < tetris.activepuzzle.length; i++)
+					{
+						var tmpy = -((tetris.activepuzzle[i].position.y-1050)/100);
+						var tmpx = ((tetris.activepuzzle[i].position.x+550)/100);
+						tetris.puzzleboard[tmpy][tmpx] = tetris.activepuzzle[i];
+					}
+					tetris.activepuzzle = [];
+				}
 			var puzzle = this.puzzles[this.type];
 			var areaStartX = parseInt((this.area.x - puzzle[0].length) / 2);
 			var areaStartY = 1;
@@ -988,14 +998,6 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 			this.x = areaStartX;
 			this.y = 1;
 			this.board = this.createEmptyPuzzle(puzzle.length, puzzle[0].length);
-			if(tetris.activepuzzle.length-1 > 0)
-				{
-					for(var i = 0; i < tetris.activepuzzle.length-1; i++)
-					{
-						tetris.puzzleboard[(tetris.activepuzzle[i].y-900)/100][(tetris.activepuzzle[i].x+500)/100] = tetris.activepuzzle[i];
-					}
-					tetris.activepuzzle = [];
-				}
 			// create puzzle
 			for (var y = puzzle.length - 1; y >= 0; y--) {
 				for (var x = 0; x < puzzle[y].length; x++) {
@@ -1014,8 +1016,8 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 				var material = new THREE.MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("img/teste.jpg") });//MeshBasicMaterial( { vertexColors: THREE.FaceColors } );
 				// MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("endereço") }) carregar foto no cubo
 				tetris.activepuzzle.push(new THREE.Mesh( geometry, material ));
-				tetris.activepuzzle[tetris.activepuzzle.length-1].translateX(((areaStartX + x) * 100)-500);
-				tetris.activepuzzle[tetris.activepuzzle.length-1].translateY(((areaStartY + lines) * 100)+900);
+				tetris.activepuzzle[tetris.activepuzzle.length-1].translateX(((areaStartX + x) * 100)-550);
+				tetris.activepuzzle[tetris.activepuzzle.length-1].translateY(((areaStartY + lines) * 100)+850);
 				tetris.activepuzzle[tetris.activepuzzle.length-1].translateZ(50);
 				scene.add( tetris.activepuzzle[tetris.activepuzzle.length-1] );
 					// this.puzzle3D.push( new THREE.CSS3DObject( puzzlepiece ));
@@ -1060,7 +1062,7 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 				// MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("endereço") }) carregar foto no cubo
 				tetris.nextpuzzle3D.push(new THREE.Mesh( geometry, material ));
 				tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1].translateX(-800);
-				tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1].translateY(((areaStartY + lines) * 100)+900);
+				tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1].translateY(((areaStartY + lines) * 100)+1000);
 				tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1].translateZ(50);
 				scene.add( tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1] );
 						var el = document.createElement("div");
@@ -1274,7 +1276,7 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 		{
 			for (var i = 0; i < this.elements.length; i++) {
 				this.elements[i].style.top  = this.elements[i].offsetTop + this.area.unit + "px";
-				tetris.activepuzzle[i].translateY(-101);		
+				tetris.activepuzzle[i].translateY(-100);		
 
 			}
 			this.y++;
@@ -1309,7 +1311,7 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 		{
 			for (var i = 0; i < this.elements.length; i++) {
 				this.elements[i].style.left = this.elements[i].offsetLeft - this.area.unit + "px";
-				tetris.activepuzzle[i].translateX(-101);	
+				tetris.activepuzzle[i].translateX(-100);	
 			}
 			this.x--;
 		};
