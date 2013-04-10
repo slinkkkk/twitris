@@ -122,12 +122,11 @@
  * document.getElementById("tetris-nextpuzzle") cache ?
  *
  */
-function Tetris(infoboard,scene)
+function Tetris(scene)
 {
 	var self = this;
-	this.infoboardScore = infoboard;
 	this.scene = scene;
-	this.stats = new Stats(infoboard);
+	this.stats = new Stats();
 	this.puzzle = null;
 	this.area = null;
 
@@ -137,7 +136,6 @@ function Tetris(infoboard,scene)
 
 	this.highscores = new Highscores(10);
 	this.paused = false;
-	this.infoboardScore.textContent = 69;
 	/**
 	 * @return void
 	 * @access public event
@@ -434,7 +432,7 @@ function Tetris(infoboard,scene)
 	 * Live game statistics
 	 * Updating html
 	 */
-	function Stats(infoboard)
+	function Stats()
 	{
 		this.level;
 		this.time;
@@ -442,7 +440,6 @@ function Tetris(infoboard,scene)
 		this.lines;
 		this.score;
 		this.puzzles; // number of puzzles created on current level
-		this.infoboardScore = infoboard;
 
 		this.actions;
 
@@ -525,7 +522,7 @@ function Tetris(infoboard,scene)
 		this.setScore = function(i)
 		{
 			this.score = i;
-			this.infoboardScore.textContent = i;
+			//this.infoboardScore.textContent = i;
 			this.el.score.innerHTML = this.score;
 		};
 
@@ -965,12 +962,27 @@ function Tetris(infoboard,scene)
 					var puzzlepiece = document.createElement( 'div' );
 					puzzlepiece.className = 'puzzlepiece';
 					puzzlepiece.style.backgroundColor = 'rgba(255,0,0,0.5)';// + ( Math.random() * 0.5 + 0.25 ) + ')';
-				
-					this.puzzle3D.push( new THREE.CSS3DObject( puzzlepiece ));
-					this.puzzle3D[this.puzzle3D.length-1].position.x = ((areaStartX + x) * 101) - 1540;
-					this.puzzle3D[this.puzzle3D.length-1].position.y = ((areaStartY - lines) * 101) + 1100;
-					this.puzzle3D[this.puzzle3D.length-1].position.z = 0;
-					scene.add( this.puzzle3D[this.puzzle3D.length-1] );
+					// CUBE	
+				var geometry = new THREE.CubeGeometry( 100, 100, 100 );
+
+				for ( var i = 0; i < geometry.faces.length; i ++ ) {
+
+					geometry.faces[ i ].color.setHex( Math.random() * 0xffffff );
+
+				}
+
+				var material = new THREE.MeshBasicMaterial( { vertexColors: THREE.FaceColors } );
+				// MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("endereço") }) carregar foto no cubo
+				this.puzzle3D.push(new THREE.Mesh( geometry, material ));
+				this.puzzle3D[this.puzzle3D.length-1].translateX(((areaStartX + x) * 100)-500);
+				this.puzzle3D[this.puzzle3D.length-1].translateY(((areaStartY + lines) * 100)+900);
+				this.puzzle3D[this.puzzle3D.length-1].translateZ(50);
+				scene.add( this.puzzle3D[this.puzzle3D.length-1] );
+					// this.puzzle3D.push( new THREE.CSS3DObject( puzzlepiece ));
+					// this.puzzle3D[this.puzzle3D.length-1].position.x = ((areaStartX + x) * 101) - 1540;
+					// this.puzzle3D[this.puzzle3D.length-1].position.y = ((areaStartY - lines) * 101) + 1100;
+					// this.puzzle3D[this.puzzle3D.length-1].position.z = 0;
+					// scene.add( this.puzzle3D[this.puzzle3D.length-1] );
 
 						var el = document.createElement("div");
 						el.className = "block" + this.type;
@@ -1166,8 +1178,8 @@ function Tetris(infoboard,scene)
 						el.style.left = el.offsetLeft + (moveX * this.area.unit) + "px";
 						el.style.top = el.offsetTop + (moveY * this.area.unit) + "px";
 						puzzle[newY][newX] = el;
-						this.puzzle3D[this.puzzle3D.length-1].position.x = (moveX * 101);
-						this.puzzle3D[this.puzzle3D.length-1].position.y = (moveY * 101);
+						//this.puzzle3D[this.puzzle3D.length-1].position.x = (moveX * 101);
+						//this.puzzle3D[this.puzzle3D.length-1].position.y = (moveY * 101);
 
 					}
 				}
@@ -1206,7 +1218,7 @@ function Tetris(infoboard,scene)
 		{
 			for (var i = 0; i < this.elements.length; i++) {
 				this.elements[i].style.top  = this.elements[i].offsetTop + this.area.unit + "px";
-				this.puzzle3D[i].position.y -= 101;		
+				this.puzzle3D[i].translateY(-101);		
 
 			}
 			this.y++;
@@ -1241,7 +1253,7 @@ function Tetris(infoboard,scene)
 		{
 			for (var i = 0; i < this.elements.length; i++) {
 				this.elements[i].style.left = this.elements[i].offsetLeft - this.area.unit + "px";
-				this.puzzle3D[i].position.x -= 101;	
+				this.puzzle3D[i].translateX(-101);	
 			}
 			this.x--;
 		};
@@ -1275,7 +1287,7 @@ function Tetris(infoboard,scene)
 		{
 			for (var i = 0; i < this.elements.length; i++) {
 				this.elements[i].style.left = this.elements[i].offsetLeft + this.area.unit + "px";
-				this.puzzle3D[i].position.x += 101;	
+				this.puzzle3D[i].translateX(100);	
 			}
 			this.x++;
 		};
