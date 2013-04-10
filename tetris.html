@@ -261,62 +261,42 @@
 
 <script>
 
-			var table = [];		
-
 			var camera, scene, renderer;
 			var controls;
 
 			var objects = [];
-			var targets = { table: [], sphere: [], helix: [], grid: [] };
 			var tetris;
-			var infoboard;	
-			var infoboardScore;
-			var infoboardOBJ;
-			var mainboard = [];
-
+			var activepuzzle = []; // peça do puzzle que esta ativa
+			var puzzleboard = [];
+			var nextpuzzle3D = [];
+			var tabuleiro;
 								
 			init();
 			animate();
 
 			function init() {
-					for (var i = 0; i < 12; i++) 
-						for (var j = 0; j < 22; j++) 
-						 table.push([(i+1)*(j+1), "b", "c", i, j]);
 
 
 
 				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 5000 );
 				camera.position.z = 1800;
-
+			
 				scene = new THREE.Scene();
-				// Instancia infoboard onde fica o menu e as demais info
-				 // 	infoboard = document.createElement( 'div' );
-					// infoboard.className = 'infoboard';
-					// infoboard.style.backgroundColor = 'rgba(0,127,127,0.5)';// + ( Math.random() * 0.5 + 0.25 ) + ')';
-
-					// infoboardScore = document.createElement( 'div' );
-					// infoboardScore.className = 'infoboardScore';
-					// infoboardScore.textContent = 0;
-					// infoboard.appendChild( infoboardScore );
-
-					// infoboardOBJ = new THREE.CSS3DObject( infoboard );			
-					// infoboardOBJ.position.x = - 1840;
-					// infoboardOBJ.position.y = 44;
-					// infoboardOBJ.position.z = 0;
-
-					// scene.add( infoboardOBJ );
-					// //objects.push( object );
-
-				// Plane
+				// cria luz ambiente
+				var alight = new THREE.AmbientLight(0xffffff);
+				scene.add(alight);
+				// Cria quadro principal do jogo
 				var geometry = new THREE.PlaneGeometry( 1200, 2200 );
 				//geometry.applyMatrix( new THREE.Matrix4().makeRotationX( - Math.PI / 2 ) );
 
 				var material = new THREE.MeshBasicMaterial( { color: 0xe0e0e0 } );
+				
 
-				var plane = new THREE.Mesh( geometry, material );
+
+				tabuleiro = new THREE.Mesh( geometry, material );
 				
 				//plane.translateX(-500);
-				scene.add( plane );
+				scene.add( tabuleiro );
 
 
 				// for ( var i = 0; i < table.length; i ++ ) {
@@ -339,7 +319,7 @@
 
 				// table
 
-				for ( var i = 0; i < objects.length; i ++ ) {
+				/*for ( var i = 0; i < objects.length; i ++ ) {
 
 					var item = table[ i ];
 
@@ -349,25 +329,7 @@
 
 					targets.table.push( object );
 
-				}
-				// CUBE	
-				var geometry = new THREE.CubeGeometry( 200, 200, 200 );
-
-				for ( var i = 0; i < geometry.faces.length; i ++ ) {
-
-					geometry.faces[ i ].color.setHex( Math.random() * 0xffffff );
-
-				}
-
-				var material = new THREE.MeshBasicMaterial( { vertexColors: THREE.FaceColors } );
-				// MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("endereço") }) carregar foto no cubo
-				cube = new THREE.Mesh( geometry, material );
-				cube.position.y = 100;
-				cube.position.x = 100;
-				cube.position.z = 0;
-				scene.add( cube );
-
-				
+				}		*/	
 
 				//
 
@@ -378,6 +340,10 @@
 				document.getElementById( 'container' ).appendChild( renderer.domElement );
 
 				//
+				tetris = new Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D);
+				tetris.unit = 14;
+				tetris.areaX = 12;
+				tetris.areaY = 22; // tamanho do campo
 
 				controls = new THREE.TrackballControls( camera, renderer.domElement );
 				controls.rotateSpeed = 0.5;
@@ -385,7 +351,7 @@
 
 				var button = document.getElementById( 'table' );
 				button.addEventListener( 'click', function ( event ) {
-					alert(tetris.stats.getScore());
+				tetris.start();			
 					
 
 				}, false );
@@ -393,33 +359,30 @@
 				var button = document.getElementById( 'sphere' );
 				button.addEventListener( 'click', function ( event ) {
 
-					transform( targets.sphere, 2000 );
+				//	transform( targets.sphere, 2000 );
 
 				}, false );
 
 				var button = document.getElementById( 'helix' );
 				button.addEventListener( 'click', function ( event ) {
 
-					transform( targets.helix, 2000 );
+				//	transform( targets.helix, 2000 );
 
 				}, false );
 
 				var button = document.getElementById( 'grid' );
 				button.addEventListener( 'click', function ( event ) {
 
-					transform( targets.grid, 2000 );
+				//	transform( targets.grid, 2000 );
 
 				}, false );
 
-				transform( targets.table, 2000 );
+				//transform( targets.table, 2000 );
 
 				//
 
 				window.addEventListener( 'resize', onWindowResize, false );
-				tetris = new Tetris(scene);
-				tetris.unit = 14;
-					tetris.areaX = 12;
-					tetris.areaY = 22; // tamanho do campo
+		
 
 			}
 

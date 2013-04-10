@@ -120,11 +120,41 @@
  * document.getElementById("tetris-nextpuzzle") cache ?
  *
  */
-function Tetris(scene)
+ function transform( origin, target, duration ) {
+
+				TWEEN.removeAll();
+
+				for ( var i = 0; i < origin.length; i ++ ) {
+
+					var origin = objects[ i ];
+					var target = targets[ i ];
+
+					new TWEEN.Tween( object.position )
+						.to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
+						.easing( TWEEN.Easing.Exponential.InOut )
+						.start();
+
+					new TWEEN.Tween( object.rotation )
+						.to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration )
+						.easing( TWEEN.Easing.Exponential.InOut )
+						.start();
+
+				}
+
+				new TWEEN.Tween( this )
+					.to( {}, duration * 2 )
+					.onUpdate( render )
+					.start();
+
+}
+function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 {
 	var self = this;
 	this.scene = scene;
 	this.stats = new Stats();
+	this.activepuzzle = activepuzzle;
+	this.puzzleboard = puzzleboard;
+	this.nextpuzzle3D = nextpuzzle3D;
 	this.puzzle = null;
 	this.area = null;
 
@@ -631,6 +661,7 @@ function Tetris(scene)
 		this.el = document.getElementById(id);
 
 		this.board = [];
+		this.puzzleboard = [];
 
 		// create 2-dimensional board
 		for (var y = 0; y < this.y; y++) {
@@ -639,6 +670,13 @@ function Tetris(scene)
 				this.board[y].push(0);
 			}
 		}
+		// cria array bi dimensional do tabuleiro 3D
+				for (var y = 0; y < this.y; y++) {
+					this.puzzleboard.push(new Array());
+					for (var x = 0; x < this.x; x++) {
+					this.puzzleboard[y].push(0);
+				}
+			}
 
 		/**
 		 * Removing html elements from area.
@@ -949,17 +987,21 @@ function Tetris(scene)
 			var lines = 0;
 			this.x = areaStartX;
 			this.y = 1;
-			this.puzzle3D = [];
 			this.board = this.createEmptyPuzzle(puzzle.length, puzzle[0].length);
+			if(tetris.activepuzzle.length-1 > 0)
+				{
+					for(var i = 0; i < tetris.activepuzzle.length-1; i++)
+					{
+						tetris.puzzleboard[(tetris.activepuzzle[i].y-900)/100][(tetris.activepuzzle[i].x+500)/100] = tetris.activepuzzle[i];
+					}
+					tetris.activepuzzle = [];
+				}
 			// create puzzle
 			for (var y = puzzle.length - 1; y >= 0; y--) {
 				for (var x = 0; x < puzzle[y].length; x++) {
 					if (puzzle[y][x]) {
 						lineFound = true;
-						// intervenção na parte grafica
-					var puzzlepiece = document.createElement( 'div' );
-					puzzlepiece.className = 'puzzlepiece';
-					puzzlepiece.style.backgroundColor = 'rgba(255,0,0,0.5)';// + ( Math.random() * 0.5 + 0.25 ) + ')';
+				
 					// CUBE	
 				var geometry = new THREE.CubeGeometry( 100, 100, 100 );
 
@@ -967,15 +1009,15 @@ function Tetris(scene)
 
 					geometry.faces[ i ].color.setHex( Math.random() * 0xffffff );
 
-				}
+				} 
 
-				var material = new THREE.MeshBasicMaterial( { vertexColors: THREE.FaceColors } );
+				var material = new THREE.MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("img/teste.jpg") });//MeshBasicMaterial( { vertexColors: THREE.FaceColors } );
 				// MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("endereço") }) carregar foto no cubo
-				this.puzzle3D.push(new THREE.Mesh( geometry, material ));
-				this.puzzle3D[this.puzzle3D.length-1].translateX(((areaStartX + x) * 100)-500);
-				this.puzzle3D[this.puzzle3D.length-1].translateY(((areaStartY + lines) * 100)+900);
-				this.puzzle3D[this.puzzle3D.length-1].translateZ(50);
-				scene.add( this.puzzle3D[this.puzzle3D.length-1] );
+				tetris.activepuzzle.push(new THREE.Mesh( geometry, material ));
+				tetris.activepuzzle[tetris.activepuzzle.length-1].translateX(((areaStartX + x) * 100)-500);
+				tetris.activepuzzle[tetris.activepuzzle.length-1].translateY(((areaStartY + lines) * 100)+900);
+				tetris.activepuzzle[tetris.activepuzzle.length-1].translateZ(50);
+				scene.add( tetris.activepuzzle[tetris.activepuzzle.length-1] );
 					// this.puzzle3D.push( new THREE.CSS3DObject( puzzlepiece ));
 					// this.puzzle3D[this.puzzle3D.length-1].position.x = ((areaStartX + x) * 101) - 1540;
 					// this.puzzle3D[this.puzzle3D.length-1].position.y = ((areaStartY - lines) * 101) + 1100;
@@ -1005,6 +1047,22 @@ function Tetris(scene)
 			for (var y = 0; y < nextPuzzle.length; y++) {
 				for (var x = 0; x < nextPuzzle[y].length; x++) {
 					if (nextPuzzle[y][x]) {
+						// cria proximo puzzle3D	
+				var geometry = new THREE.CubeGeometry( 100, 100, 100 );
+
+				for ( var i = 0; i < geometry.faces.length; i ++ ) {
+
+					geometry.faces[ i ].color.setHex( Math.random() * 0xffffff );
+
+				} 
+
+				var material = new THREE.MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("img/teste.jpg") });//MeshBasicMaterial( { vertexColors: THREE.FaceColors } );
+				// MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("endereço") }) carregar foto no cubo
+				tetris.nextpuzzle3D.push(new THREE.Mesh( geometry, material ));
+				tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1].translateX(-800);
+				tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1].translateY(((areaStartY + lines) * 100)+900);
+				tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1].translateZ(50);
+				scene.add( tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1] );
 						var el = document.createElement("div");
 						el.className = "block" + this.nextType;
 						el.style.left = (x * this.area.unit) + "px";
@@ -1216,7 +1274,7 @@ function Tetris(scene)
 		{
 			for (var i = 0; i < this.elements.length; i++) {
 				this.elements[i].style.top  = this.elements[i].offsetTop + this.area.unit + "px";
-				this.puzzle3D[i].translateY(-101);		
+				tetris.activepuzzle[i].translateY(-101);		
 
 			}
 			this.y++;
@@ -1251,7 +1309,7 @@ function Tetris(scene)
 		{
 			for (var i = 0; i < this.elements.length; i++) {
 				this.elements[i].style.left = this.elements[i].offsetLeft - this.area.unit + "px";
-				this.puzzle3D[i].translateX(-101);	
+				tetris.activepuzzle[i].translateX(-101);	
 			}
 			this.x--;
 		};
@@ -1285,7 +1343,7 @@ function Tetris(scene)
 		{
 			for (var i = 0; i < this.elements.length; i++) {
 				this.elements[i].style.left = this.elements[i].offsetLeft + this.area.unit + "px";
-				this.puzzle3D[i].translateX(100);	
+				tetris.activepuzzle[i].translateX(100);	
 			}
 			this.x++;
 		};
