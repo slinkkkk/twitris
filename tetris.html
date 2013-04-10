@@ -6,7 +6,7 @@
 	<meta http-equiv="Content-Type"	content="text/html;	charset=utf-8">
 	<link href="tetris.css"	rel="stylesheet" type="text/css">
 	<link href="tetris.ico" rel="shortcut icon">
-	<script	type="text/javascript" src="tetris.js"></script>
+
 	<style type="text/css">
 	html, body { height: 100%; }
 	#tetris	{ margin: 0	auto; }
@@ -134,11 +134,11 @@
 </head>
 <body>
 
-<script src="build/three.min.js"></script>
+<script src="build/three.js"></script>
 		<script src="js/libs/tween.min.js"></script>
 		<script src="js/controls/TrackballControls.js"></script>
 		<script src="js/renderers/CSS3DRenderer.js"></script>
-
+	<script	type="text/javascript" src="tetris.js"></script>
 		<div id="container"></div>
 		
 		<div id="menu">
@@ -283,7 +283,6 @@
 						for (var j = 0; j < 22; j++) 
 						 table.push([(i+1)*(j+1), "b", "c", i, j]);
 
-					
 
 
 				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 5000 );
@@ -291,40 +290,52 @@
 
 				scene = new THREE.Scene();
 				// Instancia infoboard onde fica o menu e as demais info
-				 	infoboard = document.createElement( 'div' );
-					infoboard.className = 'infoboard';
-					infoboard.style.backgroundColor = 'rgba(0,127,127,0.5)';// + ( Math.random() * 0.5 + 0.25 ) + ')';
+				 // 	infoboard = document.createElement( 'div' );
+					// infoboard.className = 'infoboard';
+					// infoboard.style.backgroundColor = 'rgba(0,127,127,0.5)';// + ( Math.random() * 0.5 + 0.25 ) + ')';
 
-					infoboardScore = document.createElement( 'div' );
-					infoboardScore.className = 'infoboardScore';
-					infoboardScore.textContent = 0;
-					infoboard.appendChild( infoboardScore );
+					// infoboardScore = document.createElement( 'div' );
+					// infoboardScore.className = 'infoboardScore';
+					// infoboardScore.textContent = 0;
+					// infoboard.appendChild( infoboardScore );
 
-					infoboardOBJ = new THREE.CSS3DObject( infoboard );			
-					infoboardOBJ.position.x = - 1840;
-					infoboardOBJ.position.y = 44;
-					infoboardOBJ.position.z = 0;
+					// infoboardOBJ = new THREE.CSS3DObject( infoboard );			
+					// infoboardOBJ.position.x = - 1840;
+					// infoboardOBJ.position.y = 44;
+					// infoboardOBJ.position.z = 0;
 
-					scene.add( infoboardOBJ );
-					//objects.push( object );
+					// scene.add( infoboardOBJ );
+					// //objects.push( object );
 
-				for ( var i = 0; i < table.length; i ++ ) {
+				// Plane
+				var geometry = new THREE.PlaneGeometry( 1200, 2200 );
+				//geometry.applyMatrix( new THREE.Matrix4().makeRotationX( - Math.PI / 2 ) );
 
-					var item = table[ i ];
+				var material = new THREE.MeshBasicMaterial( { color: 0xe0e0e0 } );
 
-					var puzzlepiece = document.createElement( 'div' );
-					puzzlepiece.className = 'puzzlepiece';
-					puzzlepiece.style.backgroundColor = 'rgba(0,127,127,0.5)';// + ( Math.random() * 0.5 + 0.25 ) + ')';
-					mainboard.push(puzzlepiece);
-					var object = new THREE.CSS3DObject( puzzlepiece );
-					object.position.x = Math.random() * 4000 - 2000;
-					object.position.y = Math.random() * 4000 - 2000;
-					object.position.z = Math.random() * 4000 - 2000;
-					scene.add( object );
+				var plane = new THREE.Mesh( geometry, material );
+				
+				//plane.translateX(-500);
+				scene.add( plane );
 
-					objects.push( object );
 
-				}
+				// for ( var i = 0; i < table.length; i ++ ) {
+
+				// 	var item = table[ i ];
+
+				// 	var puzzlepiece = document.createElement( 'div' );
+				// 	puzzlepiece.className = 'puzzlepiece';
+				// 	puzzlepiece.style.backgroundColor = 'rgba(0,127,127,0.5)';// + ( Math.random() * 0.5 + 0.25 ) + ')';
+				// 	mainboard.push(puzzlepiece);
+				// 	var object = new THREE.CSS3DObject( puzzlepiece );
+				// 	object.position.x = Math.random() * 4000 - 2000;
+				// 	object.position.y = Math.random() * 4000 - 2000;
+				// 	object.position.z = Math.random() * 4000 - 2000;
+				// 	scene.add( object );
+
+				// 	objects.push( object );
+
+				// }
 
 				// table
 
@@ -339,12 +350,29 @@
 					targets.table.push( object );
 
 				}
+				// CUBE	
+				var geometry = new THREE.CubeGeometry( 200, 200, 200 );
+
+				for ( var i = 0; i < geometry.faces.length; i ++ ) {
+
+					geometry.faces[ i ].color.setHex( Math.random() * 0xffffff );
+
+				}
+
+				var material = new THREE.MeshBasicMaterial( { vertexColors: THREE.FaceColors } );
+				// MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("endereço") }) carregar foto no cubo
+				cube = new THREE.Mesh( geometry, material );
+				cube.position.y = 100;
+				cube.position.x = 100;
+				cube.position.z = 0;
+				scene.add( cube );
 
 				
 
 				//
 
-				renderer = new THREE.CSS3DRenderer();
+				//renderer = new THREE.CSS3DRenderer();
+				renderer = new THREE.WebGLRenderer();
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				renderer.domElement.style.position = 'absolute';
 				document.getElementById( 'container' ).appendChild( renderer.domElement );
@@ -388,7 +416,7 @@
 				//
 
 				window.addEventListener( 'resize', onWindowResize, false );
-				tetris = new Tetris(infoboardScore,scene);
+				tetris = new Tetris(scene);
 				tetris.unit = 14;
 					tetris.areaX = 12;
 					tetris.areaY = 22; // tamanho do campo
@@ -435,7 +463,7 @@
 			function animate() {
 
 				requestAnimationFrame( animate );
-
+				render();
 				TWEEN.update();
 				controls.update();
 
