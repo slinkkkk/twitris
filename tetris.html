@@ -270,21 +270,15 @@
 			var puzzleboard = [];
 			var nextpuzzle3D = [];
 			var tabuleiro;
+			var bordaesquerda;
+			var bordadireita;
+			var bordacima;
+			var bordabaixo;
 								
 			init();
 			animate();
-
-			function init() {
-
-
-
-				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 5000 );
-				camera.position.z = 1800;
-			
-				scene = new THREE.Scene();
-				// cria luz ambiente
-				var alight = new THREE.AmbientLight(0xffffff);
-				scene.add(alight);
+			function criarTabuleiro()
+			{
 				// Cria quadro principal do jogo
 				var geometry = new THREE.PlaneGeometry( 1200, 2200 );
 				//geometry.applyMatrix( new THREE.Matrix4().makeRotationX( - Math.PI / 2 ) );
@@ -297,6 +291,47 @@
 				
 				//plane.translateX(-500);
 				scene.add( tabuleiro );
+				// create boardas laterais
+				var geometry = new THREE.CubeGeometry( 50, 2300, 100 );
+
+				var material = new THREE.MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("img/bordalateral.jpg") });
+				bordaesquerda = new THREE.Mesh( geometry, material );
+				bordadireita = new THREE.Mesh( geometry, material );
+				bordaesquerda.translateX(-625);
+				bordaesquerda.translateZ(50);
+				bordadireita.translateX(625);
+				bordadireita.translateZ(50);
+				scene.add(bordaesquerda);
+				scene.add(bordadireita);
+
+				//cria bordas de cima e de baixo
+				var geometry = new THREE.CubeGeometry( 1200, 50, 100 );
+
+				var material = new THREE.MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("img/bordalateral.jpg") });//MeshBasicMaterial( { vertexColors: THREE.FaceColors } );
+				// MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("endereço") }) carregar foto no cubo
+				bordacima = new THREE.Mesh( geometry, material );
+				bordabaixo = new THREE.Mesh( geometry, material );
+				bordacima.translateY(1125);
+				bordacima.translateZ(50);
+				bordabaixo.translateY(-1125);
+				bordabaixo.translateZ(50);
+				scene.add(bordacima);
+				scene.add(bordabaixo);
+			}
+
+			function init() {
+
+
+
+				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 5000 );
+				camera.position.z = 1800;
+			
+				scene = new THREE.Scene();
+				// cria luz ambiente
+				var alight = new THREE.AmbientLight(0xffffff);
+				scene.add(alight);
+				criarTabuleiro();
+				
 
 
 				// for ( var i = 0; i < table.length; i ++ ) {

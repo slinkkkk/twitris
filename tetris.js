@@ -1067,7 +1067,7 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 				var material = new THREE.MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("img/teste.jpg") });//MeshBasicMaterial( { vertexColors: THREE.FaceColors } );
 				// MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("endereço") }) carregar foto no cubo
 				tetris.nextpuzzle3D.push(new THREE.Mesh( geometry, material ));
-				tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1].translateX((x * 100) -800);
+				tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1].translateX((x * 100) -900);
 				tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1].translateY((y * 100)+1000);
 				tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1].translateZ(50);
 				scene.add( tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1] );
