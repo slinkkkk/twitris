@@ -142,122 +142,15 @@
 		<div id="container"></div>
 		
 		<div id="menu">
-			<button id="table">TABLE</button>
-			<button id="sphere">SPHERE</button>
-			<button id="helix">HELIX</button>
-			<button id="grid">GRID</button>
+			<button id="start">Start</button>
+			<button id="records">Records</button>
+			<button id="pause">Pause</button>
 		</div>
 
 		
 
 
-<table style="width: 100%; height: 100%; margin-left:-300px" cellspacing="0" cellpadding="0"><tr><td style="vertical-align: middle;">
 
-	<div id="tetris">
-		<div class="left">
-			<h1><a href="http://www.gosu.pl/tetris/">Js	Tetris 1.19</a></h1>
-			<div class="menu">
-				<div><a href="javascript:void(0)" id="tetris-menu-start">New Game</a></div>
-				<div id="tetris-pause">
-					<a href="javascript:void(0)" id="tetris-menu-pause">Pause</a>
-				</div>
-				<div style="display: none;" id="tetris-resume">
-					<a href="javascript:void(0)" id="tetris-menu-resume">Resume</a>
-				</div>
-				<div><a href="javascript:void(0)" id="tetris-menu-highscores">Highscores</a></div>
-				<div><a href="javascript:void(0)" id="tetris-menu-help">About</a></div>
-			</div>
-			<div id="tetris-nextpuzzle"></div>
-			<div id="tetris-gameover">Game Over</div>
-			<div id="tetris-keys">
-				<div class="h5">Keyboard:</div>
-				<table cellspacing="0" cellpadding="0">
-				<tr>
-					<td>Rotate:</td>
-					<td></td>
-					<td><img src="key-up.gif" width="14" height="14" alt=""></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td>Move:</td>
-					<td><img src="key-left.gif" width="14" height="14" alt=""></td>
-					<td><img src="key-down.gif" width="14" height="14" alt=""></td>
-					<td><img src="key-right.gif" width="14" height="14" alt=""></td>
-				</tr>
-				<tr>
-					<td>Fall:</td>
-					<td colspan="3">
-						<img src="key-space.gif" width="44" height="13" alt="">
-					</td>
-				</tr>
-				</table>
-			</div>
-			<div class="stats">
-				<div class="h5">Statistics:</div>
-				<table cellspacing="0" cellpadding="0">
-				<tr>
-					<td	class="level">Level:</td>
-					<td><span id="tetris-stats-level">1</span></td>
-				</tr>
-				<tr>
-					<td	class="score">Score:</td>
-					<td><span id="tetris-stats-score">0</span></td>
-				</tr>
-				<tr>
-					<td	class="lines">Lines:</td>
-					<td><span id="tetris-stats-lines">0</span></td>
-				</tr>
-				<tr>
-					<td	class="apm">APM:</td>
-					<td><span id="tetris-stats-apm">0</span></td>
-				</tr>
-				<tr>
-					<td	class="time">Time:</td>
-					<td><span id="tetris-stats-time">0</span></td>
-				</tr>
-
-				</table>
-			</div>
-		</div>
-		<div class="left-border"></div>
-		<div id="tetris-area">
-			<div class="grid1"></div>
-			<div class="grid2"></div>
-			<div class="grid3"></div>
-			<div class="grid4"></div>
-			<div class="grid5"></div>
-			<div class="grid6"></div>
-		</div>
-		<div id="tetris-help" class="window">
-			<div class="top">
-				About <span id="tetris-help-close" class="close">x</span>
-			</div>
-			<div class="content" style="margin-top:	1em;">
-				<div style="margin-top:	1em;">
-				<div>JsTetris is a highly customizable tetris game written in javascript,
-				full sources available, it is free to modify.
-				</div>
-				<br>
-				<div>Author: Cezary Tomczak</div>
-				<div>Site: <a href="http://www.gosu.pl/tetris/">www.gosu.pl/tetris/</a></div>
-				<br>
-				<div>License: BSD revised (free for any use)</div>
-				</div>
-			</div>
-		</div>
-		<div id="tetris-highscores"	class="window">
-			<div class="top">
-				Highscores <span id="tetris-highscores-close" class="close">x</span>
-			</div>
-			<div class="content">
-				<div id="tetris-highscores-content"></div>
-				<br>
-				Note: these	scores are kept	in cookies,	they are only visible to your computer.
-			</div>
-		</div>
-	</div>
-
-</td></tr></table>
 
 <script>
 
@@ -283,10 +176,8 @@
 				var geometry = new THREE.PlaneGeometry( 1200, 2200 );
 				//geometry.applyMatrix( new THREE.Matrix4().makeRotationX( - Math.PI / 2 ) );
 
-				var material = new THREE.MeshBasicMaterial( { color: 0x0000ff } );
+				var material = new THREE.MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("img/testelegal (5).gif") });//new THREE.MeshBasicMaterial( { color: 0x0000ff } );
 				
-
-
 				tabuleiro = new THREE.Mesh( geometry, material );
 				
 				//plane.translateX(-500);
@@ -294,8 +185,9 @@
 				// create boardas laterais
 				var geometry = new THREE.CubeGeometry( 50, 2300, 100 );
 
-				var material = new THREE.MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("img/bordalateral.jpg") });
-				bordaesquerda = new THREE.Mesh( geometry, material );
+				var material2 = new THREE.MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("img/testelegal (2).gif") });
+				var material = new THREE.MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("img/testelegal (4).gif") });
+				bordaesquerda = new THREE.Mesh( geometry, material2 );
 				bordadireita = new THREE.Mesh( geometry, material );
 				bordaesquerda.translateX(-625);
 				bordaesquerda.translateZ(50);
@@ -307,15 +199,16 @@
 				//cria bordas de cima e de baixo
 				var geometry = new THREE.CubeGeometry( 1200, 50, 100 );
 
-				var material = new THREE.MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("img/bordalateral.jpg") });//MeshBasicMaterial( { vertexColors: THREE.FaceColors } );
+				var material = new THREE.MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("img/testelegal (1).gif") });//MeshBasicMaterial( { vertexColors: THREE.FaceColors } );
+				//var material2 = new THREE.MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("img/testelegal (3).gif") });
 				// MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("endereço") }) carregar foto no cubo
-				bordacima = new THREE.Mesh( geometry, material );
+				//bordacima = new THREE.Mesh( geometry, material2 );
 				bordabaixo = new THREE.Mesh( geometry, material );
-				bordacima.translateY(1125);
-				bordacima.translateZ(50);
+				//bordacima.translateY(1125);
+				//bordacima.translateZ(50);
 				bordabaixo.translateY(-1125);
 				bordabaixo.translateZ(50);
-				scene.add(bordacima);
+				//scene.add(bordacima);
 				scene.add(bordabaixo);
 			}
 
@@ -331,7 +224,19 @@
 				var alight = new THREE.AmbientLight(0xffffff);
 				scene.add(alight);
 				criarTabuleiro();
-				
+	
+
+// 				var shapes = THREE.FontUtils.generateShapes( "Hello world", {
+//   font: "verdana",
+//   weight: "bold",
+//   size: 60
+// } );
+// var geom = new THREE.ShapeGeometry( shapes );
+// var material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+// var mesh = new THREE.Mesh( geom, material );
+// mesh.translateX(-900);
+// scene.add(mesh);
+
 
 
 				// for ( var i = 0; i < table.length; i ++ ) {
@@ -383,32 +288,32 @@
 				controls = new THREE.TrackballControls( camera, renderer.domElement );
 				controls.rotateSpeed = 0.5;
 				controls.addEventListener( 'change', render );
+				
 
-				var button = document.getElementById( 'table' );
+			document.addEventListener( 'keydown', onKeyDown, false );
+
+			//
+
+		
+
+				var button = document.getElementById( 'start' );
 				button.addEventListener( 'click', function ( event ) {
 				tetris.start();			
 					
 
 				}, false );
 
-				var button = document.getElementById( 'sphere' );
+				var button = document.getElementById( 'records' );
 				button.addEventListener( 'click', function ( event ) {
 
 				//	transform( targets.sphere, 2000 );
 
 				}, false );
 
-				var button = document.getElementById( 'helix' );
+				var button = document.getElementById( 'pause' );
 				button.addEventListener( 'click', function ( event ) {
 
 				//	transform( targets.helix, 2000 );
-
-				}, false );
-
-				var button = document.getElementById( 'grid' );
-				button.addEventListener( 'click', function ( event ) {
-
-				//	transform( targets.grid, 2000 );
 
 				}, false );
 
@@ -472,6 +377,50 @@
 				renderer.render( scene, camera );
 
 			}
+			function onKeyDown ( event ) {
+				// 	this.up = 38;
+	// 	this.down = 40;
+	// 	this.left = 37;
+	// 	this.right = 39;
+	// 	this.n = 78;
+	// 	this.p = 80;
+	// 	this.r = 82;
+	// 	this.space = 32;
+	// 	this.f12 = 123;
+	// 	this.escape = 27;
+
+				switch( event.keyCode ) {
+					case 38: //up
+						tetris.up();
+						break;
+					case 40: //down
+						tetris.down();
+						break;
+					case 37: // left
+						tetris.left();
+						break;
+					case 39 ://right
+						tetris.right();
+						break;
+
+
+					case 79: /*O*/
+
+						activeCamera = cameraOrtho;
+						activeHelper = cameraOrthoHelper;
+
+						break;
+
+					case 80: /*P*/
+
+						activeCamera = cameraPerspective;
+						activeHelper = cameraPerspectiveHelper;
+
+						break;
+
+				}
+
+			};
 
 		</script>
 
