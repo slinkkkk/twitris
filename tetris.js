@@ -147,6 +147,13 @@
 					.start();
 
 }
+
+function getRealX(x){
+			return ((x+550)/100);
+}
+function getRealY(y){
+	return  -((y-1050)/100);
+}
 function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 {
 	var self = this;
@@ -175,14 +182,7 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 		self.stats.start();
 		document.getElementById("tetris-nextpuzzle").style.display = "block";
 		document.getElementById("tetris-keys").style.display = "none";
-				// cria array bi dimensional do tabuleiro 3D
-				for (var y = 0; y < 22; y++) {
-					this.puzzleboard.push(new Array());
-					for (var x = 0; x < 12; x++) {
-					this.puzzleboard[y].push(0);
-				}
-			}
-		self.area = new Area(self.unit, self.areaX, self.areaY, "tetris-area");
+		self.area = new Area(self.unit, self.areaX, self.areaY, "tetris-area",puzzleboard);
 		self.puzzle = new Puzzle(self, self.area, self.scene);
 		if (self.puzzle.mayPlace()) {
 			self.puzzle.place();
@@ -660,14 +660,22 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 	 * @param int y
 	 * @param string id
 	 */
-	function Area(unit, x, y, id)
+	function Area(unit, x, y, id,puzzleboard)
 	{
 		this.unit = unit;
 		this.x = x;
 		this.y = y;
 		this.el = document.getElementById(id);
-
+		this.puzzleboard = puzzleboard;
 		this.board = [];
+		this.puzzleboard.length = 0;
+		// cria array bi dimensional do tabuleiro 3D
+		for (var y = 0; y < 22; y++) {
+			this.puzzleboard.push(new Array());
+			for (var x = 0; x < 12; x++) {
+				this.puzzleboard[y].push(0);
+			}
+		}
 
 		// create 2-dimensional board
 		for (var y = 0; y < this.y; y++) {
@@ -723,8 +731,12 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 		 */
 		this.isLineFull = function(y)
 		{
+			// for (var x = 0; x < this.x; x++) {
+			// 	if (!this.board[y][x]) { return false; }
+			// }
+			// return true;
 			for (var x = 0; x < this.x; x++) {
-				if (!this.board[y][x]) { return false; }
+				if (!this.puzzleboard[y][x]) { return false; }
 			}
 			return true;
 		};
@@ -740,17 +752,17 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 		this.removeLine = function(y)
 		{
 			for (var x = 0; x < this.x; x++) {
-				this.el.removeChild(this.board[y][x]);
-				this.board[y][x] = 0;
+				tetris.scene.remove( this.puzzleboard[y][x] );
+				tetris.puzzleboard[y][x] = 0;
 			}
 			y--;
 			for (; y > 0; y--) {
 				for (var x = 0; x < this.x; x++) {
-					if (this.board[y][x]) {
-						var el = this.board[y][x];
-						el.style.top = el.offsetTop + this.unit + "px";
-						this.board[y+1][x] = el;
-						this.board[y][x] = 0;
+						if (tetris.puzzleboard[y][x]) {
+						var tmpblock = tetris.puzzleboard[y][x];
+						tmpblock.translateY(-100);
+						tetris.puzzleboard[y+1][x] = tmpblock;
+						tetris.puzzleboard[y][x] = 0;
 					}
 				}
 			}
@@ -766,7 +778,7 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 		{
 			if (y < 0) { return 0; }
 			if (y < this.y && x < this.x) {
-				return this.board[y][x];
+				return tetris.puzzleboard[y][x];
 			} else {
 				throw "Area.getBlock("+y+", "+x+") failed";
 			}
@@ -779,11 +791,14 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 		 * @return void
 		 * @access public
 		 */
-		this.addElement = function(el)
+		this.addElement = function(el,activepuzzleblock)
 		{
 			var x = parseInt(el.offsetLeft / this.unit);
 			var y = parseInt(el.offsetTop / this.unit);
+			var tmpy = getRealY(activepuzzleblock.position.y);
+			var tmpx = getRealX(activepuzzleblock.position.x);
 			if (y >= 0 && y < this.y && x >= 0 && x < this.x) {
+				this.puzzleboard[tmpy][tmpx] = activepuzzleblock;
 				this.board[y][x] = el;
 			} else {
 				// not always an error ..
@@ -879,6 +894,7 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 			this.running = false;
 			this.stopped = false;
 			this.board = [];
+			tetris.activepuzzle = [];
 			this.elements = [];
 			for (var i = 0; i < this.nextElements.length; i++) {
 				document.getElementById("tetris-nextpuzzle").removeChild(this.nextElements[i]);
@@ -980,16 +996,6 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 				this.tetris.stats.setPuzzles(0);
 			}
 			// init
-			if(tetris.activepuzzle.length-1 > 0)
-				{
-					for(var i = 0; i < tetris.activepuzzle.length; i++)
-					{
-						var tmpy = -((tetris.activepuzzle[i].position.y-1050)/100);
-						var tmpx = ((tetris.activepuzzle[i].position.x+550)/100);
-						tetris.puzzleboard[tmpy][tmpx] = tetris.activepuzzle[i];
-					}
-					tetris.activepuzzle = [];
-				}
 			var puzzle = this.puzzles[this.type];
 			var areaStartX = parseInt((this.area.x - puzzle[0].length) / 2);
 			var areaStartY = 1;
@@ -1061,8 +1067,8 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 				var material = new THREE.MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("img/teste.jpg") });//MeshBasicMaterial( { vertexColors: THREE.FaceColors } );
 				// MeshLambertMaterial({map : THREE.ImageUtils.loadTexture("endereço") }) carregar foto no cubo
 				tetris.nextpuzzle3D.push(new THREE.Mesh( geometry, material ));
-				tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1].translateX(-800);
-				tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1].translateY(((areaStartY + lines) * 100)+1000);
+				tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1].translateX((x * 100) -800);
+				tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1].translateY((y * 100)+1000);
 				tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1].translateZ(50);
 				scene.add( tetris.nextpuzzle3D[tetris.nextpuzzle3D.length-1] );
 						var el = document.createElement("div");
@@ -1126,7 +1132,8 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 				} else {
 					// move blocks into area board
 					for (var i = 0; i < self.elements.length; i++) {
-						self.area.addElement(self.elements[i]);
+						self.area.addElement(self.elements[i],tetris.activepuzzle[i]);
+
 					}
 					// stats
 					var lines = self.area.removeFullLines();
@@ -1225,6 +1232,7 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 		this.rotate = function()
 		{
 			var puzzle = this.createEmptyPuzzle(this.board.length, this.board[0].length);
+			var p = 0;
 			for (var y = 0; y < this.board.length; y++) {
 				for (var x = 0; x < this.board[y].length; x++) {
 					if (this.board[y][x]) {
@@ -1233,9 +1241,23 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 						var el = this.board[y][x];
 						var moveY = newY - y;
 						var moveX = newX - x;
+						var cmpx = parseInt(el.offsetLeft / this.area.unit);
+						var cmpy = parseInt(el.offsetTop / this.area.unit);
+						for (var p = 0; p < tetris.activepuzzle.length; p++) {
+							var tmpy = getRealY(tetris.activepuzzle[p].position.y);
+							var tmpx = getRealX(tetris.activepuzzle[p].position.x);
+							if(cmpy == tmpy && cmpx == tmpx)
+							{
+						tetris.activepuzzle[p].translateX( moveX * 100 );
+						tetris.activepuzzle[p].translateY(-( moveY * 100));
+						break;
+							}
+						}
 						el.style.left = el.offsetLeft + (moveX * this.area.unit) + "px";
 						el.style.top = el.offsetTop + (moveY * this.area.unit) + "px";
 						puzzle[newY][newX] = el;
+						
+						
 						//this.puzzle3D[this.puzzle3D.length-1].position.x = (moveX * 101);
 						//this.puzzle3D[this.puzzle3D.length-1].position.y = (moveY * 101);
 
@@ -1256,13 +1278,19 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 		 */
 		this.mayMoveDown = function()
 		{
-			for (var y = 0; y < this.board.length; y++) {
-				for (var x = 0; x < this.board[y].length; x++) {
-					if (this.board[y][x]) {
-						if (this.getY() + y + 1 >= this.area.y) { this.stopped = true; return false; }
-						if (this.area.getBlock(this.getY() + y + 1, this.getX() + x)) { this.stopped = true; return false; }
-					}
-				}
+			// for (var y = 0; y < this.board.length; y++) {
+			// 	for (var x = 0; x < this.board[y].length; x++) {
+			// 		if (this.board[y][x]) {
+			// 			if (this.getY() + y + 1 >= this.area.y) { this.stopped = true; return false; }
+			// 			if (this.area.getBlock(this.getY() + y + 1, this.getX() + x)) { this.stopped = true; return false; }
+			// 		}
+			// 	}
+			// }
+			for (var i = 0; i < tetris.activepuzzle.length; i++) {
+				if(getRealY(tetris.activepuzzle[i].position.y) >= 21)
+					return false;
+				if(tetris.puzzleboard[getRealY(tetris.activepuzzle[i].position.y)+1][getRealX(tetris.activepuzzle[i].position.x)])
+					return false;
 			}
 			return true;
 		};
