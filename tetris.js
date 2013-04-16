@@ -120,31 +120,17 @@
  * document.getElementById("tetris-nextpuzzle") cache ?
  *
  */
- function transform( origin, target, duration ) {
 
-				TWEEN.removeAll();
+ function resetcubetranslate(mycubes){
+	// HORA DE GAMBIARRA
+	var MAX_SPEED = 20;
+	var MAX_ROT = .1;
+	mycubes.push( Math.random()*MAX_SPEED*2 - MAX_SPEED ); // x
+	mycubes.push( -(Math.random()*MAX_SPEED*2 - MAX_SPEED) ); //y
+	mycubes.push( Math.random()*MAX_SPEED*2 - MAX_SPEED ); // z
 
-				for ( var i = 0; i < origin.length; i ++ ) {
-
-					var origin = objects[ i ];
-					var target = targets[ i ];
-
-					new TWEEN.Tween( object.position )
-						.to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
-						.easing( TWEEN.Easing.Exponential.InOut )
-						.start();
-
-					new TWEEN.Tween( object.rotation )
-						.to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration )
-						.easing( TWEEN.Easing.Exponential.InOut )
-						.start();
-
-				}
-
-				new TWEEN.Tween( this )
-					.to( {}, duration * 2 )
-					.onUpdate( render )
-					.start();
+	mycubes.push( Math.random()*MAX_ROT*2 - MAX_ROT ); 
+	mycubes.push( Math.random()*MAX_ROT*2 - MAX_ROT );
 
 }
 
@@ -154,7 +140,7 @@ function getRealX(x){
 function getRealY(y){
 	return  -((y-1050)/100);
 }
-function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
+function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D , puzzlesToDelete)
 {
 	var self = this;
 	this.scene = scene;
@@ -162,6 +148,7 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 	this.activepuzzle = activepuzzle;
 	this.puzzleboard = puzzleboard;
 	this.nextpuzzle3D = nextpuzzle3D;
+	this.puzzlesToDelete = puzzlesToDelete;
 	this.puzzle = null;
 	this.area = null;
 
@@ -182,7 +169,7 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 		self.stats.start();
 		// document.getElementById("tetris-nextpuzzle").style.display = "block";
 		// document.getElementById("tetris-keys").style.display = "none";
-		self.area = new Area(self.unit, self.areaX, self.areaY, "tetris-area",puzzleboard,scene);
+		self.area = new Area(self.unit, self.areaX, self.areaY, "tetris-area",puzzleboard,scene,self.puzzlesToDelete);
 		self.puzzle = new Puzzle(self, self.area, self.scene);
 		if (self.puzzle.mayPlace()) {
 			self.puzzle.place();
@@ -467,6 +454,7 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 	 * Live game statistics
 	 * Updating html
 	 */
+
 	function Stats()
 	{
 		this.level;
@@ -660,11 +648,13 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 	 * @param int y
 	 * @param string id
 	 */
-	function Area(unit, x, y, id,puzzleboard,scene)
+	function Area(unit, x, y, id,puzzleboard,scene,puzzlesToDelete)
 	{
 		this.unit = unit;
 		this.x = x;
 		this.y = y;
+		this.puzzlesToDelete = puzzlesToDelete;
+		this.puzzlesToDelete.length = 0;
 		this.scene = scene;
 		// this.el = document.getElementById(id);
 		this.puzzleboard = puzzleboard;
@@ -753,10 +743,16 @@ function Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D)
 		 */
 		this.removeLine = function(y)
 		{
+			puzzlesToDelete.push(new Array());
 			for (var x = 0; x < this.x; x++) {
-				tetris.scene.remove( this.puzzleboard[y][x] );
+				var tmpcube = [];	
+				tmpcube.push(tetris.puzzleboard[y][x]);
+				resetcubetranslate(tmpcube);
+				puzzlesToDelete[puzzlesToDelete.length-1].push(tmpcube);
+				//tetris.scene.remove(tetris.puzzleboard[y][x]);
 				tetris.puzzleboard[y][x] = 0;
 			}
+
 			y--;
 			for (; y > 0; y--) {
 				for (var x = 0; x < this.x; x++) {

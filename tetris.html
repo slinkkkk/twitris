@@ -154,6 +154,7 @@
 
 <script>
 
+
 			var camera, scene, renderer;
 			var controls;
 
@@ -167,6 +168,29 @@
 			var bordadireita;
 			var bordacima;
 			var bordabaixo;
+			var puzzlesToDelete = [];
+			var cubetranslateticksArray = [];
+
+function loopmycubes(mycubes,cubetranslateticks){
+	// GAMBIARRA
+	for(var i = 0; i < mycubes.length;i++)
+	{
+	mycubes[i][0].position.x += mycubes[i][1]//.xd;
+	mycubes[i][0].position.y += mycubes[i][2];//yd;
+	mycubes[i][0].position.z += mycubes[i][3];//zd;
+
+	mycubes[i][0].rotation.x += mycubes[i][4];//xrd;
+	mycubes[i][0].rotation.z += mycubes[i][5];//zrd;
+		}
+	
+	cubetranslateticks ++;
+		if (cubetranslateticks > 100){
+		//resetcubetranslate(cubetranslateticks);
+	}
+
+			
+}
+
 								
 			init();
 			animate();
@@ -213,7 +237,6 @@
 			}
 
 			function init() {
-
 
 
 				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 5000 );
@@ -280,7 +303,7 @@
 				document.getElementById( 'container' ).appendChild( renderer.domElement );
 
 				//
-				tetris = new Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D);
+				tetris = new Tetris(scene,activepuzzle,puzzleboard,nextpuzzle3D,puzzlesToDelete);
 				tetris.unit = 14;
 				tetris.areaX = 12;
 				tetris.areaY = 22; // tamanho do campo
@@ -367,6 +390,11 @@
 
 				requestAnimationFrame( animate );
 				render();
+				for (var i = 0; i < puzzlesToDelete.length; i++) {
+					if(!cubetranslateticksArray[i])
+						cubetranslateticksArray[i] = 1;
+					loopmycubes(puzzlesToDelete[i],cubetranslateticksArray[i]);
+				};
 				TWEEN.update();
 				controls.update();
 
